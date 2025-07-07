@@ -94,7 +94,8 @@ Add this server to your Claude Desktop configuration:
       "command": "node",
       "args": ["/absolute/path/to/mcp-server/dist/index.js"],
       "env": {
-        "ISSUEBADGE_BASE_URL": "https://yourdomain.com/api/v1",
+        "ISSUEBADGE_BASE_URL": "https://app.issuebadge.com
+/api/v1",
         "ISSUEBADGE_API_KEY": "",
         "AUTH_METHOD": "sanctum"
       }
