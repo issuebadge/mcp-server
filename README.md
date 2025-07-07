@@ -60,11 +60,11 @@ Create a `.env` file based on `.env.example`:
 
 ```env
 # API Configuration
-ISSUEBADGE_BASE_URL=https://yourdomain.com/api/v1
-ISSUEBADGE_API_KEY=your_sanctum_token_here
+ISSUEBADGE_BASE_URL=https://app.issuebadge.com/api/v1
+ISSUEBADGE_API_KEY=
 
 # OAuth2 Configuration (Alternative)
-ISSUEBADGE_OAUTH_URL=https://yourdomain.com/api/v1/oauth
+ISSUEBADGE_OAUTH_URL=https://app.issuebadge.com/api/v1/oauth
 ISSUEBADGE_OAUTH_TOKEN=your_oauth_token_here
 
 # Authentication Method (sanctum or oauth2)
@@ -95,7 +95,7 @@ Add this server to your Claude Desktop configuration:
       "args": ["/absolute/path/to/mcp-server/dist/index.js"],
       "env": {
         "ISSUEBADGE_BASE_URL": "https://yourdomain.com/api/v1",
-        "ISSUEBADGE_API_KEY": "your_api_key_here",
+        "ISSUEBADGE_API_KEY": "",
         "AUTH_METHOD": "sanctum"
       }
     }
