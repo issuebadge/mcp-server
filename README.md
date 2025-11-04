@@ -7,6 +7,10 @@
 
 A Model Context Protocol (MCP) server for interacting with the IssueBadge API. This server enables AI assistants like Claude and ChatGPT to manage digital badges and certificates using natural language.
 
+<a href="https://glama.ai/mcp/servers/@issuebadge/mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@issuebadge/mcp-server/badge" alt="IssueBadge Server MCP server" />
+</a>
+
 ## 🌟 Features
 
 - **🤖 AI-Powered Badge Management**: Use natural language to create, issue, and manage badges
