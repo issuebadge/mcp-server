@@ -1,0 +1,26 @@
+{
+  "name": "issuebadge",
+  "version": "2.1.0",
+  "description": "Issue verifiable certificates and badges from IssueBadge. List your badge templates and send a certificate to a recipient by name and email.",
+  "author": {
+    "name": "IssueBadge",
+    "email": "support@issuebadge.com"
+  },
+  "homepage": "https://issuebadge.com",
+  "repository": "https://github.com/issuebadge/mcp-server",
+  "license": "MIT",
+  "keywords": ["certificates", "badges", "credentials", "issuebadge", "mcp"],
+  "logo": "assets/logo.png",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "ISSUEBADGE_API_KEY": {
+        "type": "string",
+        "title": "IssueBadge API key",
+        "description": "Your IssueBadge API key. Create or copy it at https://app.issuebadge.com/developer/index"
+      }
+    },
+    "required": ["ISSUEBADGE_API_KEY"]
+  },
+  "mcpServers": "mcp.json"
+}

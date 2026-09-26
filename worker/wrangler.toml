@@ -1,0 +1,12 @@
+name = "issuebadge-mcp"
+main = "index.ts"
+compatibility_date = "2026-05-01"
+workers_dev = true
+
+# No KV, no secrets: the IssueBadge API key travels in the caller's Authorization header per request.
+
+# Issuer of the OAuth 2.1 server that /.well-known/oauth-protected-resource points MCP clients (ChatGPT, Claude) at.
+[vars]
+AUTH_SERVER = "https://app.issuebadge.com"
+# Paste the token from platform.openai.com → Plugins → domain verification here, then redeploy.
+OPENAI_APPS_CHALLENGE = ""

@@ -1,69 +1,52 @@
 {
   "name": "issuebadge-mcp-server",
-  "version": "1.0.0",
-  "description": "MCP Server for IssueBadge API - AI-powered badge management with Claude and ChatGPT",
-  "main": "dist/index.js",
+  "version": "2.1.0",
+  "mcpName": "io.github.issuebadge/mcp-server",
+  "description": "MCP server for IssueBadge: list badge templates and issue verifiable certificates from any AI agent (Cursor, Claude, VS Code).",
   "type": "module",
+  "main": "dist/tools.js",
+  "bin": {
+    "issuebadge-mcp-server": "dist/stdio.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "dev:worker": "wrangler dev --config worker/wrangler.toml",
+    "deploy": "wrangler deploy --config worker/wrangler.toml",
+    "prepublishOnly": "npm run build"
+  },
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "badge",
-    "certificate",
-    "api",
+    "certificates",
+    "badges",
+    "credentials",
     "issuebadge",
-    "claude",
-    "chatgpt",
-    "ai",
-    "automation",
-    "digital-certificates",
-    "education",
-    "credentialing"
+    "cursor"
   ],
-  "author": {
-    "name": "IssueBadge Team",
-    "url": "https://issuebadge.com"
-  },
+  "author": "IssueBadge <support@issuebadge.com>",
   "license": "MIT",
-  "homepage": "https://github.com/issuebadge/mcp-server#readme",
+  "homepage": "https://issuebadge.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/issuebadge/mcp-server.git"
   },
-  "bugs": {
-    "url": "https://github.com/issuebadge/mcp-server/issues"
-  },
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "tsc --watch & node --watch dist/index.js",
-    "clean": "rm -rf dist",
-    "test": "npm run build && node dist/index.js --help",
-    "lint": "eslint src --ext .ts",
-    "format": "prettier --write src/**/*.ts"
-  },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.5.0",
-    "axios": "^1.7.0",
-    "dotenv": "^16.4.0",
-    "form-data": "^4.0.0",
-    "zod": "^3.22.0"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.2.0",
-    "typescript": "^5.3.0"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
-  },
-  "files": [
-    "dist/**/*",
-    "README.md",
-    "LICENSE",
-    ".env.example"
-  ]
+    "@types/node": "^20.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0",
+    "wrangler": "^4.0.0"
+  }
 }

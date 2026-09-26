@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.wrangler/
+*.log
+.env
+
+# internal launch notes, not part of the public mirror
+LISTINGS.md
+CHATGPT.md

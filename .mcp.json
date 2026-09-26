@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "issuebadge": {
+      "type": "http",
+      "url": "https://issuebadge-mcp.issuebadge.workers.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${ISSUEBADGE_API_KEY}"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "issuebadge": {
+      "type": "streamable-http",
+      "url": "https://issuebadge-mcp.issuebadge.workers.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${ISSUEBADGE_API_KEY}"
+      }
+    }
+  }
+}
