@@ -115,9 +115,22 @@ describe('worker JSON-RPC', () => {
   it('ping → {}', async () => {
     expect((await (await rpc(req(7, 'ping'))).json()).result).toEqual({});
   });
-  it('tools/list → the 3 remote tools, never create_badge', async () => {
+  it('tools/list → the remote tools (badges + QR codes), never create_badge', async () => {
     const b = await (await rpc(req(2, 'tools/list'))).json();
-    expect(b.result.tools.map((t: { name: string }) => t.name)).toEqual(['validate_key', 'get_all_badges', 'issue_badge']);
+    expect(b.result.tools.map((t: { name: string }) => t.name)).toEqual([
+      'validate_key', 'get_all_badges', 'issue_badge',
+      'create_qr_code', 'list_qr_codes', 'get_qr_code', 'update_qr_code', 'get_qr_code_scans', 'delete_qr_code',
+    ]);
+  });
+  it('tools/call create_qr_code posts to /qrcode/create with the caller bearer and returns an image block', async () => {
+    apiResponder = ({ url }) => url.endsWith('/qrcode/create')
+      ? json({ success: true, data: { code: 'btools_qrcode_z', name: 'Menu', type: 'url', data: { url: 'https://x.io' }, is_active: true, scan_count: 0, scan_url: 'https://app.issuebadge.com/q/btools_qrcode_z', image_url: 'https://app.issuebadge.com/api/v1/qrcode/btools_qrcode_z/image', image_base64: 'data:image/png;base64,QUJD' } }, 201)
+      : json({ success: false, message: 'not found' }, 404);
+    const b = await (await rpc(req(13, 'tools/call', { name: 'create_qr_code', arguments: { name: 'Menu', type: 'url', data: { url: 'https://x.io' } } }))).json();
+    expect(calls[0].url).toBe('https://app.issuebadge.com/api/v1/qrcode/create');
+    expect(new Headers(calls[0].init.headers).get('authorization')).toBe(`Bearer ${KEY}`);
+    expect(b.result.structuredContent).toMatchObject({ code: 'btools_qrcode_z', scan_url: 'https://app.issuebadge.com/q/btools_qrcode_z' });
+    expect(b.result.content[1]).toEqual({ type: 'image', data: 'QUJD', mimeType: 'image/png' });
   });
   it('tools/call get_all_badges forwards the caller bearer and returns structuredContent', async () => {
     const b = await (await rpc(req(3, 'tools/call', { name: 'get_all_badges', arguments: {} }))).json();

@@ -16,7 +16,7 @@ import { IssueBadgeClient } from '../src/issuebadge.js';
 import { callTool, InvalidParams, listTools, remoteTools } from '../src/tools.js';
 import { CERTIFICATE_WIDGET_HTML, CERTIFICATE_WIDGET_URI, WIDGET_MIME } from './widget.js';
 
-const VERSION = '2.1.0'; // not exported: workerd only allows handler/function exports from the entry module
+const VERSION = '2.2.0'; // not exported: workerd only allows handler/function exports from the entry module
 const DOCS_URL = 'https://issuebadge.com/h/docs';
 const KEY_URL = 'https://app.issuebadge.com/developer/index';
 const DEFAULT_AUTH_SERVER = 'https://app.issuebadge.com';
@@ -71,7 +71,7 @@ export async function handleRpc(msg: RpcMessage, client: IssueBadgeClient): Prom
           protocolVersion: SUPPORTED_PROTOCOLS.includes(requested) ? requested : SUPPORTED_PROTOCOLS[0],
           capabilities: { tools: {}, resources: {} },
           serverInfo: { name: 'issuebadge', version: VERSION },
-          instructions: 'Call get_all_badges to find a badge_id, then issue_badge with the recipient name and email. Certificates are emailed to the recipient and the returned certificate_url is public.',
+          instructions: 'Call get_all_badges to find a badge_id, then issue_badge with the recipient name and email. Certificates are emailed to the recipient and the returned certificate_url is public. For dynamic QR codes use create_qr_code (returns the PNG), list_qr_codes, get_qr_code, update_qr_code to change the destination without reprinting, get_qr_code_scans for analytics, and delete_qr_code only after the user confirms.',
         },
       };
     }

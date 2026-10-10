@@ -107,6 +107,63 @@ describe('IssueBadgeClient', () => {
     expect(receiver === globalThis || receiver === undefined).toBe(true);
   });
 
+  it('listQrCodes GETs /qrcode with per_page + type and maps rows + pagination.total', async () => {
+    const f = mockFetch(() => json({ success: true, data: [
+      { code: 'btools_qrcode_a', name: 'Menu', type: 'url', data: { url: 'https://x.io' }, is_active: 1, scan_count: '3', scan_url: 'https://app.issuebadge.com/q/btools_qrcode_a', image_url: 'https://app.issuebadge.com/api/v1/qrcode/btools_qrcode_a/image', created_at: '2026-10-01T00:00:00+00:00' },
+    ], pagination: { total: 7 } }));
+    const c = new IssueBadgeClient('k', DEFAULT_BASE_URL, f.fn);
+    const r = await c.listQrCodes({ type: 'url', limit: 5 });
+    expect(f.calls[0].url).toBe(DEFAULT_BASE_URL + '/qrcode?per_page=5&type=url');
+    expect(f.calls[0].init.method ?? 'GET').toBe('GET');
+    expect(r.total).toBe(7);
+    expect(r.qr_codes[0]).toEqual({
+      code: 'btools_qrcode_a', name: 'Menu', type: 'url', data: { url: 'https://x.io' }, is_active: true, scan_count: 3,
+      scan_url: 'https://app.issuebadge.com/q/btools_qrcode_a', image_url: 'https://app.issuebadge.com/api/v1/qrcode/btools_qrcode_a/image',
+      created_at: '2026-10-01T00:00:00+00:00', updated_at: undefined,
+    });
+  });
+
+  it('createQrCode POSTs JSON to /qrcode/create and keeps image_base64', async () => {
+    const f = mockFetch(() => json({ success: true, data: { code: 'btools_qrcode_b', name: 'Wifi', type: 'wifi', data: { ssid: 'Cafe' }, is_active: true, scan_count: 0, scan_url: 'u', image_url: 'i', image_base64: 'data:image/png;base64,AAAA' } }, 201));
+    const c = new IssueBadgeClient('k', DEFAULT_BASE_URL, f.fn);
+    const r = await c.createQrCode({ name: 'Wifi', type: 'wifi', data: { ssid: 'Cafe' } });
+    expect(f.calls[0].url).toBe(DEFAULT_BASE_URL + '/qrcode/create');
+    expect(f.calls[0].init.method).toBe('POST');
+    expect(JSON.parse(f.calls[0].init.body as string)).toEqual({ name: 'Wifi', type: 'wifi', data: { ssid: 'Cafe' } });
+    expect(r.code).toBe('btools_qrcode_b');
+    expect(r.image_base64).toBe('data:image/png;base64,AAAA');
+  });
+
+  it('getQrCode / updateQrCode / listQrScans / deleteQrCode hit the per-code endpoints', async () => {
+    const f = mockFetch(({ url, init }) => {
+      if (url.endsWith('/scans?per_page=10')) return json({ success: true, code: 'btools_qrcode_c', scan_count: 2, data: [{ scanned_at: '2026-10-01T00:00:00+00:00', ip_address: '1.2.3.4', user_agent: 'ua', referer: null }], pagination: { total: 2 } });
+      if (init.method === 'DELETE') return json({ success: true, message: 'QR code deleted' });
+      return json({ success: true, data: { code: 'btools_qrcode_c', name: 'N', type: 'url', data: { url: 'https://y.io' }, is_active: false, scan_count: 2, scan_url: 'u', image_url: 'i' } });
+    });
+    const c = new IssueBadgeClient('k', DEFAULT_BASE_URL, f.fn);
+    expect((await c.getQrCode('btools_qrcode_c')).code).toBe('btools_qrcode_c');
+    expect(f.calls[0].url).toBe(DEFAULT_BASE_URL + '/qrcode/btools_qrcode_c');
+
+    const u = await c.updateQrCode('btools_qrcode_c', { data: { url: 'https://y.io' }, is_active: false });
+    expect(f.calls[1].init.method).toBe('PATCH');
+    expect(JSON.parse(f.calls[1].init.body as string)).toEqual({ data: { url: 'https://y.io' }, is_active: false });
+    expect(u.is_active).toBe(false);
+
+    const s = await c.listQrScans('btools_qrcode_c', 10);
+    expect(f.calls[2].url).toBe(DEFAULT_BASE_URL + '/qrcode/btools_qrcode_c/scans?per_page=10');
+    expect(s).toEqual({ code: 'btools_qrcode_c', scan_count: 2, total: 2, scans: [{ scanned_at: '2026-10-01T00:00:00+00:00', ip_address: '1.2.3.4', user_agent: 'ua', referer: undefined }] });
+
+    expect(await c.deleteQrCode('btools_qrcode_c')).toEqual({ deleted: true, code: 'btools_qrcode_c' });
+    expect(f.calls[3].init.method).toBe('DELETE');
+    expect(f.calls[3].init.body).toBeUndefined();
+  });
+
+  it('qr methods surface the API validation message as IssueBadgeError', async () => {
+    const f = mockFetch(() => json({ success: false, message: 'Validation failed', errors: { 'data.url': ['required'] } }, 400));
+    const c = new IssueBadgeClient('k', DEFAULT_BASE_URL, f.fn);
+    await expect(c.createQrCode({ name: 'x', type: 'url', data: {} })).rejects.toMatchObject({ message: 'Validation failed', status: 400 });
+  });
+
   it('never includes the API key in error messages', async () => {
     const f = mockFetch(() => json({ success: false, message: 'nope' }, 500));
     const c = new IssueBadgeClient('secret-key-123', DEFAULT_BASE_URL, f.fn);

@@ -1,6 +1,6 @@
 ---
 name: issuebadge
-description: Issue verifiable certificates and badges with the IssueBadge MCP tools. Use when the user wants to send, award or issue a certificate, badge or credential to a person, or asks which badge templates exist.
+description: Issue verifiable certificates and badges, and manage dynamic QR codes, with the IssueBadge MCP tools. Use when the user wants to send, award or issue a certificate, badge or credential to a person, asks which badge templates exist, or wants to create, retarget, track or delete a QR code.
 ---
 
 # Issuing certificates with IssueBadge
@@ -16,6 +16,13 @@ description: Issue verifiable certificates and badges with the IssueBadge MCP to
 ## Bulk issuing
 
 For a list of recipients, call `issue_badge` once per person with a per-person idempotency key. Stop and report on the first error instead of retrying.
+
+## Dynamic QR codes
+
+1. To make a code, ask for a name and what it should open, pick the matching `type` (url, wifi, vcard, email, phone, sms, maps, event, paypal, text, facebook, twitter, youtube, mecard) and call `create_qr_code` with the type's `data` fields. Show the returned image and the `scan_url`.
+2. The printed image never changes: to send an existing code somewhere else call `update_qr_code` with new `data` (same type). Use `is_active: false` to pause a code instead of deleting it.
+3. `list_qr_codes` finds codes by name or type; `get_qr_code_scans` gives the scan count and recent scans.
+4. `delete_qr_code` is permanent and breaks printed copies. Confirm the exact code name with the user before calling it.
 
 ## Rules
 

@@ -1,8 +1,8 @@
 {
   "name": "issuebadge-mcp-server",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "mcpName": "io.github.issuebadge/mcp-server",
-  "description": "MCP server for IssueBadge: list badge templates and issue verifiable certificates from any AI agent (Cursor, Claude, VS Code).",
+  "description": "MCP server for IssueBadge: list badge templates, issue verifiable certificates and manage dynamic QR codes from any AI agent (Cursor, Claude, VS Code, ChatGPT).",
   "type": "module",
   "main": "dist/tools.js",
   "bin": {

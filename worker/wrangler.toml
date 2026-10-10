@@ -9,4 +9,4 @@ workers_dev = true
 [vars]
 AUTH_SERVER = "https://app.issuebadge.com"
 # Paste the token from platform.openai.com → Plugins → domain verification here, then redeploy.
-OPENAI_APPS_CHALLENGE = ""
+OPENAI_APPS_CHALLENGE = "avenBeBFGssR-H8iJgjLwdbAWf3IOvw8lWO-tWY7NgA"
