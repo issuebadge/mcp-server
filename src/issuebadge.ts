@@ -50,8 +50,6 @@ export type QrCode = {
 
 export type QrScan = {
   scanned_at?: string;
-  ip_address?: string;
-  user_agent?: string;
   referer?: string;
 };
 
@@ -193,8 +191,6 @@ export class IssueBadgeClient {
       scan_count: Number(data.scan_count ?? 0),
       scans: rows.map((s) => ({
         scanned_at: typeof s.scanned_at === 'string' ? s.scanned_at : undefined,
-        ip_address: typeof s.ip_address === 'string' ? s.ip_address : undefined,
-        user_agent: typeof s.user_agent === 'string' ? s.user_agent : undefined,
         referer: typeof s.referer === 'string' ? s.referer : undefined,
       })),
       total: Number(pagination.total ?? rows.length),

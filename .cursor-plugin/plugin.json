@@ -1,6 +1,6 @@
 {
   "name": "issuebadge",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Issue verifiable certificates and badges from IssueBadge, and manage dynamic QR codes. List your badge templates, send a certificate to a recipient by name and email, or create a QR code whose destination you can change later.",
   "author": {
     "name": "IssueBadge",

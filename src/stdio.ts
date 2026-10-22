@@ -11,7 +11,7 @@ import { DEFAULT_BASE_URL, IssueBadgeClient } from './issuebadge.js';
 import { callTool, InvalidParams, listTools, remoteTools } from './tools.js';
 import { createBadgeTool } from './createBadge.js';
 
-export const VERSION = '2.2.0';
+export const VERSION = '2.2.1';
 
 const apiKey = (process.env.ISSUEBADGE_API_KEY ?? '').trim();
 if (!apiKey) {

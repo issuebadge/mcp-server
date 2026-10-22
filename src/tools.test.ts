@@ -123,6 +123,8 @@ describe('qr code tools', () => {
     expect(byName('list_qr_codes').securitySchemes).toEqual([{ type: 'oauth2', scopes: ['read'] }]);
     expect(byName('create_qr_code').securitySchemes).toEqual([{ type: 'oauth2', scopes: ['write'] }]);
     expect(byName('delete_qr_code').annotations).toMatchObject({ destructiveHint: true });
+    expect(byName('update_qr_code').annotations).toMatchObject({ destructiveHint: true });
+    expect(byName('issue_badge').annotations).toMatchObject({ openWorldHint: true });
     expect(byName('get_qr_code').annotations).toMatchObject({ readOnlyHint: true });
   });
 });

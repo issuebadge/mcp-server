@@ -162,7 +162,7 @@ describe('worker JSON-RPC', () => {
     expect(issue._meta.ui).toEqual({ resourceUri: 'ui://widget/certificate.html' });
     expect(issue._meta['openai/toolInvocation/invoking']).toBe('Issuing certificate…');
     expect(issue.securitySchemes).toEqual([{ type: 'oauth2', scopes: ['write'] }]);
-    expect(issue.annotations).toMatchObject({ readOnlyHint: false, destructiveHint: false });
+    expect(issue.annotations).toMatchObject({ readOnlyHint: false, destructiveHint: false, openWorldHint: true });
     expect(issue.outputSchema.required).toContain('certificate_url');
     expect(issue._meta.securitySchemes).toEqual([{ type: 'oauth2', scopes: ['write'] }]);
     const list = tools.find((t: { name: string }) => t.name === 'get_all_badges');

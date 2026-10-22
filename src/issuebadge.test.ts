@@ -151,7 +151,7 @@ describe('IssueBadgeClient', () => {
 
     const s = await c.listQrScans('btools_qrcode_c', 10);
     expect(f.calls[2].url).toBe(DEFAULT_BASE_URL + '/qrcode/btools_qrcode_c/scans?per_page=10');
-    expect(s).toEqual({ code: 'btools_qrcode_c', scan_count: 2, total: 2, scans: [{ scanned_at: '2026-10-01T00:00:00+00:00', ip_address: '1.2.3.4', user_agent: 'ua', referer: undefined }] });
+    expect(s).toEqual({ code: 'btools_qrcode_c', scan_count: 2, total: 2, scans: [{ scanned_at: '2026-10-01T00:00:00+00:00', referer: undefined }] });
 
     expect(await c.deleteQrCode('btools_qrcode_c')).toEqual({ deleted: true, code: 'btools_qrcode_c' });
     expect(f.calls[3].init.method).toBe('DELETE');

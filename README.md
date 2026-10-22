@@ -91,7 +91,7 @@ Example prompt once installed: *"Issue the Course Completion certificate to Jane
 | `list_qr_codes` | `type?`, `limit?` | `{ qr_codes: [...], total }` |
 | `get_qr_code` | `code` | the QR code + PNG image block |
 | `update_qr_code` | `code`, `name?`, `data?`, `is_active?` | the updated QR code |
-| `get_qr_code_scans` | `code`, `limit?` | `{ code, scan_count, scans: [{ scanned_at, ip_address, user_agent, referer }], total }` |
+| `get_qr_code_scans` | `code`, `limit?` | `{ code, scan_count, scans: [{ scanned_at, referer }], total }` |
 | `delete_qr_code` | `code` | `{ deleted: true, code }` |
 
 Types: `url`, `vcard`, `paypal`, `wifi`, `email`, `phone`, `sms`, `maps`, `event`, `facebook`, `twitter`, `youtube`, `text`, `mecard`. The image encodes an IssueBadge redirect (`scan_url`), so `update_qr_code` changes where a printed code goes without reprinting it. `data` holds the type's fields, for example `{ "url": "https://…" }`, `{ "ssid", "password", "security" }` for wifi, or `{ "latitude", "longitude" }` for maps.

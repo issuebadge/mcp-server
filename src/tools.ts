@@ -123,7 +123,7 @@ const issueBadge: ToolDef = {
     additionalProperties: false,
   },
   securitySchemes: [{ type: 'oauth2', scopes: ['write'] }],
-  annotations: { title: 'Issue certificate', readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  annotations: { title: 'Issue certificate', readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   outputSchema: {
     type: 'object',
     properties: {
@@ -272,7 +272,7 @@ const updateQrCode: ToolDef = {
     additionalProperties: false,
   },
   ...qrWrite,
-  annotations: { title: 'Update QR code', readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  annotations: { title: 'Update QR code', readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
   outputSchema: qrCodeOutput,
   meta: { 'openai/toolInvocation/invoking': 'Updating QR code…', 'openai/toolInvocation/invoked': 'QR code updated' },
   schema: z
@@ -286,7 +286,7 @@ const updateQrCode: ToolDef = {
 
 const getQrCodeScans: ToolDef = {
   name: 'get_qr_code_scans',
-  description: 'Scan analytics for a dynamic QR code: total scan count and the most recent scans (time, IP, user agent, referer).',
+  description: 'Scan analytics for a dynamic QR code: total scan count and the most recent scans (time and referer). No scanner IP addresses or user agents are returned.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -306,7 +306,7 @@ const getQrCodeScans: ToolDef = {
       total: { type: 'integer' },
       scans: {
         type: 'array',
-        items: { type: 'object', properties: { scanned_at: { type: 'string' }, ip_address: { type: 'string' }, user_agent: { type: 'string' }, referer: { type: 'string' } } },
+        items: { type: 'object', properties: { scanned_at: { type: 'string' }, referer: { type: 'string' } } },
       },
     },
     required: ['code', 'scan_count', 'scans'],
