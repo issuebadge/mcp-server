@@ -19,10 +19,8 @@ For a list of recipients, call `issue_badge` once per person with a per-person i
 
 ## Dynamic QR codes
 
-1. To make a code, ask for a name and what it should open, pick the matching `type` (url, wifi, vcard, email, phone, sms, maps, event, paypal, text, facebook, twitter, youtube, mecard) and call `create_qr_code` with the type's `data` fields. Show the returned image and the `scan_url`.
-2. The printed image never changes: to send an existing code somewhere else call `update_qr_code` with new `data` (same type). Use `is_active: false` to pause a code instead of deleting it.
-3. `list_qr_codes` finds codes by name or type; `get_qr_code_scans` gives the scan count and recent scans.
-4. `delete_qr_code` is permanent and breaks printed copies. Confirm the exact code name with the user before calling it.
+1. Codes are created and retargeted in the IssueBadge dashboard, not here. `list_qr_codes` finds codes by name or type; `get_qr_code` returns the image and `scan_url`; `get_qr_code_scans` gives the scan count and recent scans.
+2. `delete_qr_code` is permanent and breaks printed copies. Confirm the exact code name with the user before calling it.
 
 ## Rules
 

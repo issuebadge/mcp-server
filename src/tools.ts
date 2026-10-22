@@ -3,7 +3,7 @@
  * Each tool has a hand-written JSON schema (what MCP clients see) and a zod schema (what we validate with).
  */
 import { z, type ZodTypeAny } from 'zod';
-import { IssueBadgeClient, IssueBadgeError, QR_TYPES, type QrType } from './issuebadge.js';
+import { IssueBadgeClient, IssueBadgeError, QR_TYPES } from './issuebadge.js';
 
 export type ContentBlock = { type: 'text'; text: string } | { type: 'image'; data: string; mimeType: string };
 
@@ -160,12 +160,6 @@ const issueBadge: ToolDef = {
 
 // ---- Dynamic QR codes ----
 
-const QR_DATA_HELP =
-  'Payload for the chosen type. url/facebook/youtube: {url}. text: {text}. email: {to, subject?, body?}. phone: {phone}. ' +
-  'sms: {phone, message?}. wifi: {ssid, password?, security? (WPA|WEP|nopass)}. vcard: {name, organization?, phone?, email?, website?, address?}. ' +
-  'mecard: {name, phone?, email?, memo?}. maps: {latitude, longitude, name?}. event: {title, start (date), end?, location?, description?}. ' +
-  'paypal: {paypal_id, amount?, currency? (3 letters)}. twitter: {username}. Links must start with http:// or https://.';
-
 const qrCodeOutput = {
   type: 'object',
   properties: {
@@ -177,7 +171,7 @@ const qrCodeOutput = {
     scan_count: { type: 'integer' },
     scan_url: { type: 'string', description: 'The URL encoded in the image; redirects to the current destination.' },
     image_url: { type: 'string', description: 'PNG/SVG endpoint (needs the API key): add ?size=100..2000&format=png|svg.' },
-    image_base64: { type: 'string', description: 'data:image/png;base64 of the QR image (create and get only).' },
+    image_base64: { type: 'string', description: 'data:image/png;base64 of the QR image (get only).' },
     created_at: { type: 'string' },
     updated_at: { type: 'string' },
   },
@@ -186,35 +180,6 @@ const qrCodeOutput = {
 
 const qrRead = { securitySchemes: [{ type: 'oauth2', scopes: ['read'] }] as { type: string; scopes?: string[] }[] };
 const qrWrite = { securitySchemes: [{ type: 'oauth2', scopes: ['write'] }] as { type: string; scopes?: string[] }[] };
-const dataSchema = z.record(z.unknown());
-
-const createQrCode: ToolDef = {
-  name: 'create_qr_code',
-  description:
-    'Create a dynamic QR code in IssueBadge. The image encodes a short IssueBadge redirect link, so the destination (data) can be changed later with update_qr_code without reprinting. Returns the QR image (PNG) plus its scan_url.',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      name: { type: 'string', description: 'Internal label, e.g. "Spring workshop sign-in".' },
-      type: { type: 'string', enum: [...QR_TYPES], description: 'What the code opens when scanned.' },
-      data: { type: 'object', additionalProperties: true, description: QR_DATA_HELP },
-      is_active: { type: 'boolean', description: 'Inactive codes show a disabled page when scanned. Default true.' },
-    },
-    required: ['name', 'type', 'data'],
-    additionalProperties: false,
-  },
-  ...qrWrite,
-  annotations: { title: 'Create QR code', readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
-  outputSchema: qrCodeOutput,
-  meta: { 'openai/toolInvocation/invoking': 'Creating QR code…', 'openai/toolInvocation/invoked': 'QR code created' },
-  schema: z.object({
-    name: z.string().min(1).max(255),
-    type: z.enum(QR_TYPES),
-    data: dataSchema,
-    is_active: z.boolean().optional(),
-  }),
-  run: async (client, args) => client.createQrCode(args as { name: string; type: QrType; data: Record<string, unknown>; is_active?: boolean }),
-};
 
 const listQrCodes: ToolDef = {
   name: 'list_qr_codes',
@@ -244,7 +209,7 @@ const getQrCode: ToolDef = {
   description: 'Get one dynamic QR code by its code id, including the PNG image and current destination.',
   inputSchema: {
     type: 'object',
-    properties: { code: { type: 'string', description: 'QR code id from create_qr_code or list_qr_codes.' } },
+    properties: { code: { type: 'string', description: 'QR code id from list_qr_codes.' } },
     required: ['code'],
     additionalProperties: false,
   },
@@ -254,34 +219,6 @@ const getQrCode: ToolDef = {
   meta: { 'openai/toolInvocation/invoking': 'Loading QR code…', 'openai/toolInvocation/invoked': 'QR code loaded' },
   schema: z.object({ code: z.string().min(1) }),
   run: async (client, args) => client.getQrCode((args as { code: string }).code),
-};
-
-const updateQrCode: ToolDef = {
-  name: 'update_qr_code',
-  description:
-    'Change where a dynamic QR code points (data), rename it, or activate/deactivate it. Printed codes keep working because the image encodes the redirect link. The type cannot change.',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      code: { type: 'string', description: 'QR code id.' },
-      name: { type: 'string' },
-      data: { type: 'object', additionalProperties: true, description: 'New payload for the code\'s existing type. ' + QR_DATA_HELP },
-      is_active: { type: 'boolean' },
-    },
-    required: ['code'],
-    additionalProperties: false,
-  },
-  ...qrWrite,
-  annotations: { title: 'Update QR code', readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
-  outputSchema: qrCodeOutput,
-  meta: { 'openai/toolInvocation/invoking': 'Updating QR code…', 'openai/toolInvocation/invoked': 'QR code updated' },
-  schema: z
-    .object({ code: z.string().min(1), name: z.string().min(1).max(255).optional(), data: dataSchema.optional(), is_active: z.boolean().optional() })
-    .refine((v) => v.name !== undefined || v.data !== undefined || v.is_active !== undefined, { message: 'Provide name, data or is_active' }),
-  run: async (client, args) => {
-    const { code, ...rest } = args as { code: string; name?: string; data?: Record<string, unknown>; is_active?: boolean };
-    return client.updateQrCode(code, rest);
-  },
 };
 
 const getQrCodeScans: ToolDef = {
@@ -336,7 +273,7 @@ const deleteQrCode: ToolDef = {
   run: async (client, args) => client.deleteQrCode((args as { code: string }).code),
 };
 
-export const remoteTools: ToolDef[] = [validateKey, getAllBadges, issueBadge, createQrCode, listQrCodes, getQrCode, updateQrCode, getQrCodeScans, deleteQrCode];
+export const remoteTools: ToolDef[] = [validateKey, getAllBadges, issueBadge, listQrCodes, getQrCode, getQrCodeScans, deleteQrCode];
 
 export function listTools(tools: ToolDef[]): Record<string, unknown>[] {
   return tools.map(({ name, description, inputSchema, meta, securitySchemes, annotations, outputSchema }) => ({

@@ -8,7 +8,7 @@ Two ways to run it:
 |---|---|---|
 | Endpoint | `https://issuebadge-mcp.issuebadge.workers.dev/mcp` | `npx issuebadge-mcp-server` |
 | Auth | `Authorization: Bearer <API key>` header | `ISSUEBADGE_API_KEY` env var |
-| Tools | `validate_key`, `get_all_badges`, `issue_badge`, `create_qr_code`, `list_qr_codes`, `get_qr_code`, `update_qr_code`, `get_qr_code_scans`, `delete_qr_code` | the same + `create_badge` |
+| Tools | `validate_key`, `get_all_badges`, `issue_badge`, `list_qr_codes`, `get_qr_code`, `get_qr_code_scans`, `delete_qr_code` | the same + `create_badge` |
 | Storage | none, stateless | none |
 
 You need an IssueBadge API key: **app.issuebadge.com → Developer → API key** (https://app.issuebadge.com/developer/index).
@@ -87,14 +87,12 @@ Example prompt once installed: *"Issue the Course Completion certificate to Jane
 
 | Tool | Input | Returns |
 |---|---|---|
-| `create_qr_code` | `name`, `type`, `data`, `is_active?` | the QR code (`code`, `scan_url`, `image_url`, `image_base64`) + a PNG image block |
 | `list_qr_codes` | `type?`, `limit?` | `{ qr_codes: [...], total }` |
 | `get_qr_code` | `code` | the QR code + PNG image block |
-| `update_qr_code` | `code`, `name?`, `data?`, `is_active?` | the updated QR code |
 | `get_qr_code_scans` | `code`, `limit?` | `{ code, scan_count, scans: [{ scanned_at, referer }], total }` |
 | `delete_qr_code` | `code` | `{ deleted: true, code }` |
 
-Types: `url`, `vcard`, `paypal`, `wifi`, `email`, `phone`, `sms`, `maps`, `event`, `facebook`, `twitter`, `youtube`, `text`, `mecard`. The image encodes an IssueBadge redirect (`scan_url`), so `update_qr_code` changes where a printed code goes without reprinting it. `data` holds the type's fields, for example `{ "url": "https://…" }`, `{ "ssid", "password", "security" }` for wifi, or `{ "latitude", "longitude" }` for maps.
+Types: `url`, `vcard`, `paypal`, `wifi`, `email`, `phone`, `sms`, `maps`, `event`, `facebook`, `twitter`, `youtube`, `text`, `mecard`. Codes are created and retargeted in the IssueBadge dashboard; the image encodes an IssueBadge redirect (`scan_url`), so a printed code keeps working when its destination changes.
 
 Example prompt: *"Create a QR code named Menu that opens https://example.com/menu and show it to me."*
 

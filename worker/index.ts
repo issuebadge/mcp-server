@@ -16,7 +16,7 @@ import { IssueBadgeClient } from '../src/issuebadge.js';
 import { callTool, InvalidParams, listTools, remoteTools } from '../src/tools.js';
 import { CERTIFICATE_WIDGET_HTML, CERTIFICATE_WIDGET_URI, WIDGET_MIME } from './widget.js';
 
-const VERSION = '2.2.1'; // not exported: workerd only allows handler/function exports from the entry module
+const VERSION = '2.2.2'; // not exported: workerd only allows handler/function exports from the entry module
 const DOCS_URL = 'https://issuebadge.com/h/docs';
 const KEY_URL = 'https://app.issuebadge.com/developer/index';
 const DEFAULT_AUTH_SERVER = 'https://app.issuebadge.com';
